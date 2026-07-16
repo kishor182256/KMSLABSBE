@@ -16,14 +16,17 @@ env/
 .env.local
 
 # Runtime storage
-uploads/*
-voices/*
-output/*
-temp/*
-!uploads/.gitkeep
-!voices/.gitkeep
-!output/.gitkeep
-!temp/.gitkeep
+uploaded_voice_samples/*
+voice_profiles/*
+generated_audio_outputs/*
+temporary_processing_files/*
+!uploaded_voice_samples/.gitkeep
+!voice_profiles/.gitkeep
+!generated_audio_outputs/.gitkeep
+!temporary_processing_files/.gitkeep
+
+# Generated API metadata
+temporary_processing_files/metadata/
 
 # Logs
 *.log

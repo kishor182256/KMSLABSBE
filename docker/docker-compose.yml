@@ -8,7 +8,7 @@ services:
     env_file:
       - ../backend/.env.example
     volumes:
-      - ../backend/uploads:/app/uploads
-      - ../backend/voices:/app/voices
-      - ../backend/output:/app/output
-      - ../backend/temp:/app/temp
+      - ../backend/uploaded_voice_samples:/app/uploaded_voice_samples
+      - ../backend/voice_profiles:/app/voice_profiles
+      - ../backend/generated_audio_outputs:/app/generated_audio_outputs
+      - ../backend/temporary_processing_files:/app/temporary_processing_files
