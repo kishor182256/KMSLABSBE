@@ -1,0 +1,14 @@
+services:
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8000:8000"
+    env_file:
+      - ../backend/.env.example
+    volumes:
+      - ../backend/uploads:/app/uploads
+      - ../backend/voices:/app/voices
+      - ../backend/output:/app/output
+      - ../backend/temp:/app/temp
