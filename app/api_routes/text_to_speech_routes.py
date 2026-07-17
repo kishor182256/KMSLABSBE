@@ -14,6 +14,8 @@ def generate_text_to_speech(payload: TextToSpeechGenerateRequest) -> TextToSpeec
         return service.generate(payload)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except RuntimeError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
 
 
 @router.get("/jobs/{job_id}", response_model=TextToSpeechJob)
@@ -29,4 +31,5 @@ def download_job_output(job_id: str) -> FileResponse:
     path = service.output_file(job_id)
     if path is None:
         raise HTTPException(status_code=404, detail="Output file not found")
-    return FileResponse(path, filename=path.name)
+    media_type = "audio/mpeg" if path.suffix.lower() == ".mp3" else "audio/wav"
+    return FileResponse(path, filename=path.name, media_type=media_type)

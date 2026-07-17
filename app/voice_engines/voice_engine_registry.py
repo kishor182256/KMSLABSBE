@@ -3,6 +3,7 @@ from app.voice_engines.fish_speech_voice_engine import FishSpeechEngine
 from app.voice_engines.placeholder_voice_engine import PlaceholderVoiceEngine
 from app.voice_engines.voice_engine_base import VoiceEngine
 from app.voice_engines.xtts_v2_voice_engine import XTTSEngine
+from app.application_core.application_settings import settings
 
 
 ENGINES: dict[str, VoiceEngine] = {
@@ -18,7 +19,7 @@ ENGINES: dict[str, VoiceEngine] = {
 
 
 def get_engine(name: str | None) -> VoiceEngine:
-    engine_name = (name or "dummy").lower()
+    engine_name = (name or settings.default_voice_engine).lower()
     if engine_name not in ENGINES:
         raise ValueError(f"Unknown voice engine: {engine_name}")
     return ENGINES[engine_name]

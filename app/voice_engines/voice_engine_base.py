@@ -7,6 +7,8 @@ class VoiceOptions:
     emotion: str = "neutral"
     speed: float = 1.0
     output_format: str = "wav"
+    pause_seconds: float = 0.8
+    quality_mode: str = "balanced"
 
 
 class VoiceEngine(ABC):

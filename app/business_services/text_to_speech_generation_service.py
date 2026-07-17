@@ -1,3 +1,5 @@
+import hashlib
+import json
 from datetime import UTC, datetime
 from pathlib import Path
 from uuid import uuid4
@@ -29,26 +31,43 @@ class TextToSpeechGenerationService:
             raise ValueError(f"Voice not found: {payload.voice_id}")
 
         engine = get_engine(payload.engine or settings.default_voice_engine)
+        request_key = self._request_key(payload, engine.name)
+        reusable_job = self._find_reusable_job(request_key)
+        if reusable_job is not None:
+            return reusable_job
+
         job = TextToSpeechJob(
             id=uuid4().hex,
             status="running",
             progress=25,
             voice_id=payload.voice_id,
             engine=engine.name,
+            request_key=request_key,
             output_path=None,
             created_at=datetime.now(UTC),
         )
         self._save_job(job)
 
-        output_path = engine.clone(
-            payload.voice_id,
-            payload.text,
-            VoiceOptions(
-                emotion=payload.emotion,
-                speed=payload.speed,
-                output_format=payload.output_format,
-            ),
-        )
+        try:
+            output_path = engine.clone(
+                payload.voice_id,
+                payload.text,
+                VoiceOptions(
+                    emotion=payload.emotion,
+                    speed=payload.speed,
+                    output_format=payload.output_format,
+                    pause_seconds=payload.pause_seconds,
+                    quality_mode=payload.quality_mode,
+                ),
+            )
+        except Exception as exc:
+            job.status = "failed"
+            job.progress = 100
+            job.error_message = str(exc)
+            job.completed_at = datetime.now(UTC)
+            self._save_job(job)
+            raise
+
         job.status = "completed"
         job.progress = 100
         job.output_path = output_path
@@ -68,3 +87,27 @@ class TextToSpeechGenerationService:
         rows = [row for row in jobs if row["id"] != job.id]
         rows.append(job.model_dump(mode="json"))
         write_collection("jobs", rows)
+
+    def _find_reusable_job(self, request_key: str) -> TextToSpeechJob | None:
+        for job in reversed(self.list_jobs()):
+            if job.request_key != request_key:
+                continue
+            if job.status == "completed" and job.output_path and Path(job.output_path).exists():
+                return job
+            if job.status == "running":
+                return job
+        return None
+
+    def _request_key(self, payload: TextToSpeechGenerateRequest, engine_name: str) -> str:
+        request_data = {
+            "voice_id": payload.voice_id,
+            "text": " ".join(payload.text.split()),
+            "engine": engine_name,
+            "emotion": payload.emotion,
+            "speed": round(payload.speed, 3),
+            "output_format": payload.output_format.lower().lstrip("."),
+            "pause_seconds": round(payload.pause_seconds, 3),
+            "quality_mode": payload.quality_mode,
+        }
+        encoded = json.dumps(request_data, sort_keys=True, ensure_ascii=True).encode("utf-8")
+        return hashlib.sha256(encoded).hexdigest()

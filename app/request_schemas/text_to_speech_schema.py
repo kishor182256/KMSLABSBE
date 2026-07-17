@@ -9,6 +9,8 @@ class TextToSpeechGenerateRequest(BaseModel):
     emotion: str = "neutral"
     speed: float = 1.0
     output_format: str = "wav"
+    pause_seconds: float = 0.8
+    quality_mode: str = "balanced"
 
 
 class TextToSpeechJob(BaseModel):
@@ -17,7 +19,9 @@ class TextToSpeechJob(BaseModel):
     progress: int
     voice_id: str
     engine: str
+    request_key: str | None = None
     output_path: str | None = None
+    error_message: str | None = None
     created_at: datetime
     completed_at: datetime | None = None
 

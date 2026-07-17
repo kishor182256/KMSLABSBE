@@ -1,5 +1,8 @@
-fastapi==0.116.1
+fastapi==0.139.1
 uvicorn[standard]==0.35.0
 pydantic-settings==2.10.1
 python-multipart==0.0.20
 aiofiles==24.1.0
+lameenc==1.7.0
+imageio-ffmpeg==0.6.0
+f5-tts==1.1.21

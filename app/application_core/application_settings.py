@@ -12,9 +12,20 @@ class Settings(BaseSettings):
     output_dir: str = "generated_audio_outputs"
     temp_dir: str = "temporary_processing_files"
     metadata_dir: str = "temporary_processing_files/metadata"
-    default_voice_engine: str = "dummy"
+    default_voice_engine: str = "f5_tts"
+    xtts_model_name: str = "tts_models/multilingual/multi-dataset/xtts_v2"
+    xtts_device: str = "auto"
+    f5_tts_model_name: str = "F5TTS_v1_Base"
+    f5_tts_device: str = "auto"
+    f5_tts_cache_dir: str | None = None
+    f5_tts_allow_auto_transcription: bool = True
+    f5_tts_default_reference_text: str = "This is a reference voice sample for voice cloning."
+    f5_tts_max_chunk_characters: int = 420
+    f5_tts_parallel_workers: int = 1
+    ffmpeg_binary_path: str | None = None
+    ffprobe_binary_path: str | None = None
 
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
 
 settings = Settings()
