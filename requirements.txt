@@ -5,4 +5,4 @@ python-multipart==0.0.20
 aiofiles==24.1.0
 lameenc==1.7.0
 imageio-ffmpeg==0.6.0
-f5-tts==1.1.21
+git+https://github.com/AI4Bharat/IndicF5.git

@@ -16,3 +16,8 @@ class VoiceProfile(BaseModel):
     sample_path: str
     profile_path: str
     created_at: datetime
+
+
+class VoiceTranscriptionResponse(BaseModel):
+    voice_id: str
+    text: str

@@ -22,8 +22,15 @@ class Settings(BaseSettings):
     f5_tts_default_reference_text: str = "This is a reference voice sample for voice cloning."
     f5_tts_max_chunk_characters: int = 420
     f5_tts_parallel_workers: int = 1
+    indic_f5_model_name: str = "ai4bharat/IndicF5"
+    indic_f5_device: str = "auto"
+    indic_f5_cache_dir: str | None = None
+    indic_f5_max_chunk_characters: int = 180
+    huggingface_token: str | None = None
+    hf_token: str | None = None
     ffmpeg_binary_path: str | None = None
     ffprobe_binary_path: str | None = None
+    style_references_dir: str = "style_references"
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 

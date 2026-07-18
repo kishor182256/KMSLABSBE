@@ -1,6 +1,7 @@
 from pathlib import Path
 from uuid import uuid4
 from datetime import UTC, datetime
+import inspect
 import os
 import re
 import shutil
@@ -235,14 +236,28 @@ class F5TTSEngine(VoiceEngine):
         self._verify_torchcodec_runtime()
 
         try:
-            self._model = F5TTS(
-                model=settings.f5_tts_model_name,
-                device=self._resolve_device(),
-                hf_cache_dir=settings.f5_tts_cache_dir,
-            )
+            self._model = F5TTS(**self._f5tts_constructor_kwargs(F5TTS))
         except RuntimeError as exc:
             raise RuntimeError(self._friendly_runtime_error(exc)) from exc
         return self._model
+
+    def _f5tts_constructor_kwargs(self, model_class) -> dict:
+        kwargs = {
+            "device": self._resolve_device(),
+            "hf_cache_dir": settings.f5_tts_cache_dir,
+        }
+        parameters = inspect.signature(model_class).parameters
+        if "model" in parameters:
+            kwargs["model"] = settings.f5_tts_model_name
+        else:
+            kwargs["model_type"] = self._f5_model_type(settings.f5_tts_model_name)
+        return kwargs
+
+    def _f5_model_type(self, model_name: str) -> str:
+        normalized = model_name.lower().replace("_", "-")
+        if normalized.startswith("e2"):
+            return "E2-TTS"
+        return "F5-TTS"
 
     def _resolve_ffmpeg_paths(self) -> tuple[str, str]:
         ffmpeg_path = self._resolve_executable_path(settings.ffmpeg_binary_path)

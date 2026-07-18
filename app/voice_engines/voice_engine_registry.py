@@ -1,5 +1,6 @@
 from app.voice_engines.f5_tts_voice_engine import F5TTSEngine
 from app.voice_engines.fish_speech_voice_engine import FishSpeechEngine
+from app.voice_engines.indic_f5_voice_engine import IndicF5VoiceEngine
 from app.voice_engines.placeholder_voice_engine import PlaceholderVoiceEngine
 from app.voice_engines.voice_engine_base import VoiceEngine
 from app.voice_engines.xtts_v2_voice_engine import XTTSEngine
@@ -13,6 +14,8 @@ ENGINES: dict[str, VoiceEngine] = {
     "xtts_v2": XTTSEngine(),
     "f5tts": F5TTSEngine(),
     "f5_tts": F5TTSEngine(),
+    "indic_f5": IndicF5VoiceEngine(),
+    "indicf5": IndicF5VoiceEngine(),
     "fishspeech": FishSpeechEngine(),
     "fish_speech": FishSpeechEngine(),
 }
